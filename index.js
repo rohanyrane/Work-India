@@ -139,6 +139,46 @@ app.get('/api/books?title={search_query}',async(req,res)=>{
 });
 
 
+app.get('/api/books/{book_id}/availability', (req, res) => {
+    const { book_id } = req.params;
+  
+    connection.query(
+      'SELECT * FROM books WHERE book_id = ?',
+      [book_id],
+      (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          if (result.length === 0) {
+            // Book not found
+            res.status(404).send("Book not found");
+          } else {
+            const book = result[0];
+            const response = {
+              book_id: book.book_id,
+              title: book.title,
+              author: book.author,
+              available: book.available
+            };
+            var return_time;
+            if (!book.available) {
+                connection.query(`SELECT * FROM history WHERE book_id=?`.[book_id],async(err,res)=>{
+                    if(err){
+                        console.log(err);
+                    }else{
+                        return_time = res[0].return_time
+                    }
+                })
+              response.return_time = return_time;
+            }
+  
+            res.send(response);
+          }
+        }
+      }
+    );
+  });
+
 
 app.get('/api/books/borrow',async(req,res)=>{
     const  book_id  = req.body.book_id;
