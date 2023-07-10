@@ -33,21 +33,21 @@ app.post('/api/signup/',async(req,res)=>{
     // console.log(hashpassword);
     const role = "user";
 
-
-    connection.query(`INSERT INTO users (username,email,password,role) VALUES (?,?,?,?)`,
-    [username,email,hashpassword,role],
+    const userId = uuidv4();
+    connection.query(`INSERT INTO users (userId,username,email,password,role) VALUES (?,?,?,?,?)`,
+    [userId,username,email,hashpassword,role],
     async(err,result) => {
         if(err){
             throw err;
             console.log(err);
         }else{
-            // const userId = connection.query("SELECT userId FROM users WHERE email=?",[username]);
+            // const userId = connection.query("SELECT userId FROM users WHERE email=?",[email]);
             // console.log("userID ", userId);
             console.log(result);
             res.send({
                 "status" : "Account successfully created",
                 "status_code" : 200,
-                "user_id" : 1234
+                "user_id" : userId
             })
         }
     })
