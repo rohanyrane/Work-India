@@ -126,6 +126,7 @@ app.post('/api/books/create',async(req,res)=> {
 
 app.get('/api/books?title={search_query}',async(req,res)=>{
     const {title}= req.query;
+    console.log(title); 
     connection.query( `SELECT * FROM books WHERE title LIKE ?`,[`%${title}%`],async(err,result)=>{
         if(err){
             throw err;  
@@ -139,10 +140,38 @@ app.get('/api/books?title={search_query}',async(req,res)=>{
 
 
 
-app.get('/api/books/{book_id}/availability',async(req,res)=>{
-    const  book_id  = req.params;
+app.get('/api/books/borrow',async(req,res)=>{
+    const  book_id  = req.body.book_id;
+    const user_id = req.body.user_id;
+    const issue_time = req.body.issue_time;
+    const return_time = req.body.return_time;
 
-    connection.query(`SELECT * FROM  book`)
+    connection.query(`SELECT * FROM  book WHERE book_id=?`,[book_id],async(err,result)=>{
+        if(err){
+            throw err;
+            console.log(err);
+        }
+        else{
+            if(result[0].availabile==true){
+                res.send({
+                    "status": "Book is not available at this moment",
+                    "status_code": 400
+                })
+            }
+            connection.query(`UPDATE books SET TRUE WHERE book_id=?`,[book_id],async(err,result){
+                if(err){
+                    console.log(err);
+                }
+                const booking_id=uuidv4();
+                connection.query(`INSERT INTO history (book_id,user_id,return_time, issue_time, booking_id)`,[book_id,user_id,return_time,issue_time,booking_id],async(err,result)=>{
+                    if(err){
+                        console.log(err);
+                    }
+                });
+            })
+
+        }
+    })
 
 })
 
