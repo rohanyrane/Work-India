@@ -162,7 +162,7 @@ app.get('/api/books/{book_id}/availability', (req, res) => {
             };
             var return_time;
             if (!book.available) {
-                connection.query(`SELECT * FROM history WHERE book_id=?`.[book_id],async(err,res)=>{
+                connection.query(`SELECT * FROM history WHERE book_id=?`,[book_id],async(err,res)=>{
                     if(err){
                         console.log(err);
                     }else{
@@ -175,9 +175,7 @@ app.get('/api/books/{book_id}/availability', (req, res) => {
             res.send(response);
           }
         }
-      }
-    );
-  });
+    });});
 
 
 app.get('/api/books/borrow',async(req,res)=>{
@@ -198,7 +196,7 @@ app.get('/api/books/borrow',async(req,res)=>{
                     "status_code": 400
                 })
             }
-            connection.query(`UPDATE books SET TRUE WHERE book_id=?`,[book_id],async(err,result){
+            connection.query(`UPDATE books SET TRUE WHERE book_id=?`,[book_id],async(err,result)=>{
                 if(err){
                     console.log(err);
                 }
