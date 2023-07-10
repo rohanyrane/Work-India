@@ -70,7 +70,6 @@ app.post("/api/login", async (req, res) => {
         })
       } else {
         console.log(result[0]);
-        res.send("logined");
         if (result) {
           const comparison = await bcrypt.compareSync(password, result[0].password)
           if (comparison) {
